@@ -1,0 +1,4 @@
+wagtail
+requests
+python-dotenv
+django-click
