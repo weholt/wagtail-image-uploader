@@ -97,4 +97,4 @@ The title of the image is set, the tags are added and collections are created:
    :width: 600
 
 .. image:: images/img_2.png
-   :width: 600
+   :width: 200

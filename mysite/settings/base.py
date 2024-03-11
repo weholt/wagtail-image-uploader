@@ -176,7 +176,7 @@ WAGTAILADMIN_BASE_URL = "http://example.com"
 
 
 IMAGE_UPLOADER = {
-    "API_KEY": "bXItBfsOlktKy97AliCMhz0xgplUPQD31yIG7bjYoEhp2LuxiuZINYs5NUXum1vaMLyDFFPRsvU8tRU5dU5eNr06FDQ9Vb9uSF6NgDrnZ2vIgwxsEd6I0tXZjS33laSDXIKw87COW0AaV3OlaGFVhsS3SNJ87wfLNjTBrtXWjhOQV9FGotN9zO8Rag3t2khDFyyzoUqsoD7xyZGHR8jTk4e80tnRoTJJFx2vT8a5Q9mrQQrrUpjECvdPeAe2WbNMlzwCCof8SDwwX3OCrmoEx3wsp6Oj3fzZDhJrJjnZrHEluqUHB6BYVKFc5JzNgXfqqrlTcGY1M50vZB97Fm65LjRuRUjE70P7DcwpXS4YtHUulayMX1H8xeA0gusBXln5Fp9EUc7vfF9iMELACCjBVJlfFnho9gOvc7YkKDegkD6zfmXsegokQwaTOj5OV7IenAidWbckQhMrWbh5IHenuKnJ4EkgcAugJhI02ulg69sKfdmWksFaiw6zEXRP5nU0",
+    "API_KEY": "U0n7bUrr1J98npj2SBo6XHmpsK5j8VlHZu3fO1FYpLIxsiWLo1SEwugRI4XjfAvbxUXMcx1khWvyf0shTAAu19OmMIyMAV74fvWexm7cCAv0rxZWuBdZrGxfShMtPfeh",
     "PRE_PROCESSORS": ["image_uploader.processors.pre_processor.DummyPreProcessor"],
     "POST_PROCESSORS": [
         "image_uploader.processors.post_processor.AssignTitleFromMetadataPostProcessor",

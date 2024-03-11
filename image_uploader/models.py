@@ -18,7 +18,7 @@ class ImageUploadAccessKey(models.Model):
 
     user = models.OneToOneField(get_user_model(), on_delete=models.CASCADE)
     key = models.CharField(
-        max_length=512,
+        max_length=128,
         unique=True,
         default=get_key,
         help_text="The unique key for a given user to access the upload API",
@@ -33,7 +33,7 @@ class ImageUploadAccessKey(models.Model):
             try:
                 obj, _ = cls.objects.get_or_create(
                     user=User.objects.get(username=username),
-                    defaults={"key": get_random_string(length=512)},
+                    defaults={"key": get_random_string(length=128)},
                 )
                 return obj.key
             except IntegrityError:
@@ -41,4 +41,5 @@ class ImageUploadAccessKey(models.Model):
 
     @classmethod
     def get_user_by_key(cls, key: str):
-        return cls.objects.filter(key=key).first()
+        if user_api_key_mapping := cls.objects.filter(key=key).first():
+            return user_api_key_mapping.user

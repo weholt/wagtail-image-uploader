@@ -21,8 +21,8 @@ def upload_image(request):
     if not api_key:
         return JsonResponse({"succes": False, "reason": "Missing API key"}, status=401)
 
-    acces_key = ImageUploadAccessKey.get_user_by_key(api_key)
-    if not acces_key:
+    user = ImageUploadAccessKey.get_user_by_key(api_key)
+    if not user:
         return JsonResponse({"succes": False, "reason": "User has no upload access"}, status=401)
 
     if not request.FILES:
@@ -36,7 +36,9 @@ def upload_image(request):
         )
 
     processors_applied = []
-    image = form.save()
+    image = form.save(commit=False)
+    image.uploaded_by_user = user
+    image.save()
     try:
         for processor in get_image_post_processors():
             processor.process(image, request.POST)
