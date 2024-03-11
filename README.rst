@@ -102,3 +102,10 @@ The title of the image is set, the tags are added and collections are created:
 
 .. image:: images/img_2.png
    :width: 200
+
+There is also a shortcut available:
+
+.. code-block:: bash
+
+    >>> from image_uploader.services import upload_file
+    >>> upload_file('http://localhost:8000/upload-image', 'test.png')
