@@ -49,15 +49,20 @@ Add image uploader at the top of your installed apps:
 
 Add *path("", include("image_uploader.urls")),* to your urls.py.
 
-Create an upload API key for a given user by using the management command:
+Create superuser allowed to upload images using the API:
+
+.. code-block:: bash
+
+    $ python manage.py migrate
+    $ python manage.py createsuperuser
+
+Generate an upload API key for a given user by using the management command:
 
 .. code-block:: bash
 
     $ python manage.py get_upload_key <username>
 
-Or by adding one in snippets section of your Wagtail site.
-
-Important environment variables, can be defined in either .env or settings.py. Example of .env:
+Copy the key printed on the screen and add it to your settings.py, similar to below:
 
 .. code-block:: bash
 
@@ -71,7 +76,6 @@ Important environment variables, can be defined in either .env or settings.py. E
         ]
     }
 
-The two at the bottom can be skipped. More on those later, in a future release.
 
 Basic Usage
 -----------
