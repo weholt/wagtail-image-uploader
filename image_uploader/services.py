@@ -3,14 +3,17 @@ import os
 
 import requests
 
-from .config import get_image_processor_pre, get_setting
+from .config import get_image_pre_processors, get_setting
 
 
 class UploadService:
-    def __init__(self, api_key: str | None = None):
-        self.api_key = api_key or get_setting("IMAGE_UPLOADER_API_KEY")
+    def __init__(self, api_key: str | None = None, verbose: bool = True):
+        self.api_key = api_key or get_setting("API_KEY")
+        self.verbse = verbose
+        if self.verbse and self.api_key:
+            logging.debug("UploadService initialized with API-key.")
 
-    def upload_file(self, url, filename):
+    def upload_file(self, url, filename, **kwargs):
         """
         Will try to upload an image and its metadata to a given url.
         """
@@ -20,11 +23,10 @@ class UploadService:
         msg = None
         lg = None
         try:
-            metadata = {}
+            metadata = {**kwargs}
             metadata["api_key"] = self.api_key
 
-            processor = get_image_processor_pre()
-            if processor:
+            for processor in get_image_pre_processors():
                 filename, metadata = processor.process(filename, metadata)
 
             try:

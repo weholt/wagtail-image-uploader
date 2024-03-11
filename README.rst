@@ -61,9 +61,15 @@ Important environment variables, can be defined in either .env or settings.py. E
 
 .. code-block:: bash
 
-    IMAGE_UPLOADER_API_KEY=<your upload api-key>
-    IMAGE_UPLOADER_PRE_PROCESSOR = "image_uploader.processors.pre_processor.DummyPreProcessor"
-    IMAGE_UPLOADER_POST_PROCESSOR = "image_uploader.processors.post_processor.DummyPostProcessor"
+    IMAGE_UPLOADER = {
+        'API_KEY': "<your API key>",
+        'PRE_PROCESSORS': ["image_uploader.processors.pre_processor.DummyPreProcessor"],
+        'POST_PROCESSORS': [
+            "image_uploader.processors.post_processor.AssignTitleFromMetadataPostProcessor",
+            "image_uploader.processors.post_processor.AssignTagsFromMetadataPostProcessor",
+            "image_uploader.processors.post_processor.AssignCollectionFromMetadataPostProcessor"
+        ]
+    }
 
 The two at the bottom can be skipped. More on those later, in a future release.
 
@@ -77,4 +83,18 @@ Basic Usage
     (InteractiveConsole)
     >>> from image_uploader.services import UploadService
     >>> us = UploadService()
-    >>> us.upload_file('http://localhost:8000/upload-image', 'test.png')
+    >>> us.upload_file(
+        url="http://localhost:8000/upload-image",
+        filename="test.png",
+        title="Custom title",
+        tags=["tag1", "tag2", "tag3"],
+        collections="home/foo/bar"
+    )
+
+The title of the image is set, the tags are added and collections are created:
+
+.. image:: images/img_1.png
+   :width: 600
+
+.. image:: images/img_2.png
+   :width: 600

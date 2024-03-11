@@ -3,7 +3,7 @@ from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from wagtail.images import get_image_model
 
-from .config import get_image_processor_post
+from .config import get_image_post_processors
 from .models import ImageUploadAccessKey
 
 Image = get_image_model()
@@ -35,13 +35,14 @@ def upload_image(request):
             status=400,
         )
 
+    processors_applied = []
     image = form.save()
-    processor = get_image_processor_post()
-    if processor:
-        try:
+    try:
+        for processor in get_image_post_processors():
             processor.process(image, request.POST)
-            return JsonResponse({"succes": True, "post_processor": processor.__clas__.__name__}, status=201)
-        except Exception as ex:
-            return JsonResponse({"succes": False, "reason": str(ex), "post_processor": str(processor)}, status=201)
+            processors_applied.append(processor.__class__.__name__)
+        image.save()
+    except Exception as ex:
+        return JsonResponse({"succes": False, "reason": str(ex)}, status=201)
 
-    return JsonResponse({"succes": True}, status=201)
+    return JsonResponse(processors_applied and {"succes": True, "processors": processors_applied} or {"succes": True}, status=201)

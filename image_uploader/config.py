@@ -1,13 +1,8 @@
 import logging
-import os
 from typing import Any
 
 from django.conf import settings
 from django.utils.module_loading import import_string
-from dotenv import load_dotenv
-
-dotenv_path = os.path.join(os.getcwd(), ".env")
-load_dotenv(dotenv_path)
 
 logger = logging.getLogger("image-uploader")
 logging.basicConfig(format="%(levelname)s:%(message)s", level=logging.DEBUG)
@@ -16,22 +11,20 @@ SUPPORTED_IMAGE_FORMATS = [".jpg", ".png", ".avif", ".webp"]
 
 
 def get_setting(key: str, default: Any | None = None) -> Any:
-    return hasattr(settings, key) and getattr(settings, key) or os.environ.get(key, default)
+    return hasattr(settings, "IMAGE_UPLOADER") and key in settings.IMAGE_UPLOADER and settings.IMAGE_UPLOADER[key]
 
 
-def get_image_processor_post():
-    if hasattr(settings, "IMAGE_UPLOADER_POST_PROCESSOR"):
+def dynamic_import(import_strings: list[str]):
+    for import_str in import_strings:
         try:
-            return import_string(getattr(settings, "IMAGE_UPLOADER_POST_PROCESSOR"))()
+            yield import_string(import_str)
         except ImportError as ex:
-            print(f"Error importing upload image post-processor: {ex}")
-            return
+            print(f"Error importing PRE/POST image uploader processor: {ex}")
 
 
-def get_image_processor_pre():
-    if hasattr(settings, "IMAGE_UPLOADER_PRE_PROCESSOR"):
-        try:
-            return import_string(getattr(settings, "IMAGE_UPLOADER_PRE_PROCESSOR"))()
-        except ImportError as ex:
-            print(f"Error importing upload image post-processor: {ex}")
-            return
+def get_image_pre_processors():
+    return get_setting("PRE_PROCESSORS") and [processor() for processor in dynamic_import(get_setting("PRE_PROCESSORS"))] or []
+
+
+def get_image_post_processors():
+    return get_setting("POST_PROCESSORS") and [processor() for processor in dynamic_import(get_setting("POST_PROCESSORS"))] or []
