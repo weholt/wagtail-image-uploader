@@ -154,13 +154,12 @@ Doing it all in code is pretty easy as well:
 
 .. code-block:: bash
 
-    from image_uploader.config import UploadClientConfiguration
     from image_uploader.client import UploadClient
 
     url="http://localhost:8000/upload-image"
     api_key="U0n7bUrr1J98npj2SBo6XHmpsK5j8VlHZu3fO1FYpLIxsiWLo1SEwugRI4XjfAvbxUXMcx1khWvyf0shTAAu19OmMIyMAV74fvWexm7cCAv0rxZWuBdZrGxfShMtPfeh"
-    config = UploadClientConfiguration(api_key=api_key, url=url)
-    client = UploadClient.create_from_config(config, verbose=True)
+
+    client = UploadClient(api_key=api_key, url=url, verbose=True)
     client.upload_files(*['test.png'])
 
 And even more elaborate example using default values and pre-processors as well:
