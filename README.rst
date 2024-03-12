@@ -3,12 +3,13 @@ Wagtail Image Uploader
 ***********************
 
 Wagtail Image Uploader is a small package to provide an easy to use API for uploading images to one or more Wagtail sites in code.
-It is has two main components; a django view accepting uploads and a command-line client called `wiuc` making the uploads.
+It is has two main components; a django view accepting uploads and a command-line client called *wiuc* making the uploads.
 
 Features
 --------
 
 * Single entry point for uploading images, protected by a long-ass access key generated for each user.
+* Handy command line tool for uploading several images to several sites in one process.
 
 Current status
 --------------
@@ -84,7 +85,7 @@ Create superuser allowed to upload images using the API:
 Take note of the key printed on the screen, you'll need it later. Now create file called .image_uploader.toml in your home or current
 directory. The one in the current folder will be used as standard, and the one in your home folder used as fallback.
 
-Each site you want to upload images to gets their own section in the .image_uploader.toml file, like so:
+Each site you want to upload images to gets their own section in the *.image_uploader.toml* file, like so:
 
 .. code-block:: toml
 
