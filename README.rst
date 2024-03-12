@@ -93,12 +93,15 @@ Each site you want to upload images to gets their own section in the *.image_upl
     url="http://localhost:8000/upload-image"
     api_key="<your api key for this site>"
     pre_processors=[
+
         # This pre-processor looks for files called filename_to_upload + .json, ie. "image_1.png.json",
         # and extracts any json data from that file and adds that date to the metadata for that specific
         # file on upload
         "image_uploader.processors.pre_processor.JsonPreProcessor",
+
     ]
-    defaults={ 'name' = 'John', 'collections' = 'the/default/folder' } # This is added to the metadata for each file on upload
+    # This is added to the metadata for each file on upload
+    defaults={ 'name' = 'John', 'collections' = 'the/default/folder' }
 
     [example]
     url="http://example.com/upload-image"
