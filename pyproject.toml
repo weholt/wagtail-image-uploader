@@ -1,5 +1,5 @@
 [project]
-name = "Wagtail Image Uploader"
+name = "image_uploader"
 version = "0.1.0"
 dependencies = [
   "wagtail",
@@ -37,4 +37,7 @@ max_blank_lines=0
 indent_size=5
 
 [project.scripts]
-"manage.py" = "mysite:django_manage"
+"wiuc" = "image_uploader.cli:main"
+
+[build-system]
+requires = ["setuptools == 68.2.2"]

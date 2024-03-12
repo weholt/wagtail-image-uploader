@@ -176,8 +176,6 @@ WAGTAILADMIN_BASE_URL = "http://example.com"
 
 
 IMAGE_UPLOADER = {
-    "API_KEY": "U0n7bUrr1J98npj2SBo6XHmpsK5j8VlHZu3fO1FYpLIxsiWLo1SEwugRI4XjfAvbxUXMcx1khWvyf0shTAAu19OmMIyMAV74fvWexm7cCAv0rxZWuBdZrGxfShMtPfeh",
-    "PRE_PROCESSORS": ["image_uploader.processors.pre_processor.DummyPreProcessor"],
     "POST_PROCESSORS": [
         "image_uploader.processors.post_processor.AssignTitleFromMetadataPostProcessor",
         "image_uploader.processors.post_processor.AssignTagsFromMetadataPostProcessor",
