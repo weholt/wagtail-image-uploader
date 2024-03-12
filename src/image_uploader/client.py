@@ -73,7 +73,7 @@ class UploadClient:
         self.upload_handler = upload_handler or RequestBasedUploadHandler()
 
         if self.verbse and self.api_key:
-            logging.debug(f"UploadService for {self.url} initialized with API-key.")
+            logging.debug(f"UploadClient for {self.url} initialized with API-key.")
 
     def add_pre_processors(self, *pre_processors: PreProcessor):
         self.pre_processors = pre_processors
