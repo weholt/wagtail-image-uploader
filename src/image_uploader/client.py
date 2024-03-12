@@ -1,11 +1,11 @@
 import json
 import logging
 import os
-from typing import Any, Iterable, Protocol
+from typing import Any, Iterable, Protocol, Self
 
 import requests
 
-from .config import SUPPORTED_IMAGE_FORMATS
+from .config import SUPPORTED_IMAGE_FORMATS, PreProcessor, UploadClientConfiguration
 
 
 class UploadAbortedException(Exception):
@@ -18,13 +18,6 @@ class UploadAbortedException(Exception):
 
     def __str__(self) -> str:
         return f"Upload aborted by pre-processor {self.pre_processor.__class__.__name__}: {self.msg}"
-
-
-class PreProcessor(Protocol):
-    "The base interface for all pre-processors"
-
-    def process(self, filename: str, metadata: dict) -> tuple[str, dict]:
-        return (filename, metadata)
 
 
 class DummyPreProcessor:
@@ -74,6 +67,13 @@ class UploadClient:
 
         if self.verbse and self.api_key:
             logging.debug(f"UploadClient for {self.url} initialized with API-key.")
+
+    @staticmethod
+    def create_from_config(config: UploadClientConfiguration, verbose: bool = False) -> Self:
+        client = UploadClient(config.url, config.api_key, verbose)
+        client.add_pre_processors(*config.pre_processors)
+        client.add_defaults(**config.defaults)
+        return client
 
     def add_pre_processors(self, *pre_processors: PreProcessor):
         self.pre_processors = pre_processors

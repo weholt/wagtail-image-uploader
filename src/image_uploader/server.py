@@ -2,7 +2,7 @@ from typing import Any, Iterable
 
 from django.conf import settings
 
-from .processors.post_processor import PostProcessor
+from .config import PostProcessor
 from .utils import dynamic_import
 
 

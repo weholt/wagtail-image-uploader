@@ -1,6 +1,5 @@
 import os
 import sys
-import tomllib
 from pathlib import Path
 
 import click
@@ -8,7 +7,8 @@ import click
 from image_uploader import __VERSION__
 from image_uploader.client import UploadClient
 from image_uploader.config import SUPPORTED_IMAGE_FORMATS
-from image_uploader.utils import dynamic_import, find_files, sizeof_fmt
+from image_uploader.factory import create_config_from_toml
+from image_uploader.utils import find_files, sizeof_fmt
 
 
 @click.command()
@@ -52,27 +52,20 @@ def main(__input, sites, verbose=False):
         click.echo(click.style("\n\nYou got to give files or folders to process as input using one or more -i <filename or folder>. Exiting.\n", fg="red"))
         main(["--help"])
     else:
+        user_configs = create_config_from_toml(config)
+        unconfigured_sites = [s for s in sites if s not in user_configs]
+        if unconfigured_sites:
+            click.echo(click.style(f"Found sites missing configurations: {unconfigured_sites}.", fg="warning"))
+            return
+
         click.echo(click.style(f"Preparing to upload {len(files)} files ({sizeof_fmt(file_size)}) to {len(sites)} sites.", fg="green"))
-        with open(config, "rb") as f:
-            data = tomllib.load(f)
-            for site in sites:
-                api_key = data.get(site, {}).get("api_key")
-                url = data.get(site, {}).get("url")
-                defaults = data.get(site, {}).get("defaults", {})
-                if defaults:
-                    click.echo(click.style(f"Defaults: {defaults}", fg="green"))
+        for site in sites:
+            client = UploadClient.create_from_config(user_configs.get(site), verbose=verbose)
+            if client.defaults:
+                click.echo(click.style(f"Defaults: {client.defaults}", fg="green"))
+            if client.pre_processors:
+                pre_processor_names = [p.__class__.__name__ for p in client.pre_processors]
+                click.echo(click.style(f"Pre-processors: {pre_processor_names}", fg="green"))
 
-                pre_processors = []
-                pre_processors_strings = data.get(site, {}).get("pre_processors")
-                if pre_processors_strings:
-                    pre_processors = [p() for p in dynamic_import(pre_processors_strings)]
-                    pre_processor_names = [p.__class__.__name__ for p in pre_processors]
-                    click.echo(click.style(f"Pre-processors: {pre_processor_names}", fg="green"))
-
-                click.echo(click.style(f"Uploading to {site} @ {url}.", fg="green"))
-                print("")
-
-                client = UploadClient(url, api_key, verbose)
-                client.add_pre_processors(*pre_processors)
-                client.add_defaults(**defaults)
-                client.upload_files(*files)
+            click.echo(click.style(f"Uploading to {site} @ {client.url}.", fg="green"))
+            client.upload_files(*files)

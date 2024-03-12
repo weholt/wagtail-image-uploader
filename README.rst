@@ -149,3 +149,37 @@ To get more information during the process, add the --verbose flag:
     DEBUG:Starting new HTTP connection (1): localhost:8000
     DEBUG:http://localhost:8000 "POST /upload-image HTTP/1.1" 201 229
     DEBUG:(Success:True) Uploaded test.png. Result: {'succes': True, 'processors': ... })
+
+Doing it all in code is pretty easy as well:
+
+.. code-block:: bash
+
+    from image_uploader.config import UploadClientConfiguration
+    from image_uploader.client import UploadClient
+
+    url="http://localhost:8000/upload-image"
+    api_key="U0n7bUrr1J98npj2SBo6XHmpsK5j8VlHZu3fO1FYpLIxsiWLo1SEwugRI4XjfAvbxUXMcx1khWvyf0shTAAu19OmMIyMAV74fvWexm7cCAv0rxZWuBdZrGxfShMtPfeh"
+    config = UploadClientConfiguration(api_key=api_key, url=url)
+    client = UploadClient.create_from_config(config, verbose=True)
+    client.upload_files(*['test.png'])
+
+And even more elaborate example using default values and pre-processors as well:
+
+.. code-block:: bash
+
+    from image_uploader.config import UploadClientConfiguration
+    from image_uploader.client import UploadClient
+    from image_uploader.factory import pre_processors_from_strings
+
+    url="http://localhost:8000/upload-image"
+    api_key="U0n7bUrr1J98npj2SBo6XHmpsK5j8VlHZu3fO1FYpLIxsiWLo1SEwugRI4XjfAvbxUXMcx1khWvyf0shTAAu19OmMIyMAV74fvWexm7cCAv0rxZWuBdZrGxfShMtPfeh"
+    pre_processors_string=["image_uploader.processors.pre_processor.JsonPreProcessor"]
+    config = UploadClientConfiguration(
+        api_key=api_key,
+        url=url,
+        defaults={
+            'collections': 'default/folder'
+        },
+        pre_processors=pre_processors_from_strings(pre_processors_string))
+    client = UploadClient.create_from_config(config, verbose=True)
+    client.upload_files(*['test.png'])

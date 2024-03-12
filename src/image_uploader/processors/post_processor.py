@@ -1,19 +1,9 @@
-from typing import Protocol, Self, TypeVar
+from typing import Self, TypeVar
 
 from django.http import QueryDict
 from wagtail.models import Collection
 
 Image = TypeVar("Image")
-
-
-class PostProcessor(Protocol):
-    def __init__(self, image: Image, metadata: QueryDict) -> Self:
-        ...
-
-    def process(self, *args, **kwargs) -> bool | None:
-        """
-        Return true if actions have been taken.
-        """
 
 
 class PostProcessorBase:
