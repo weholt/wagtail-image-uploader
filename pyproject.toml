@@ -20,8 +20,8 @@ max_blank_lines=0
 [tool.djlint.css]
 indent_size=5
 
-[project.scripts]
-"wiuc" = "image_uploader.cli:main"
+#[project.scripts]
+#"wiuc" = "image_uploader.cli:main"
 
 [build-system]
 requires = ["setuptools == 68.2.2"]
