@@ -21,11 +21,21 @@ max_blank_lines=0
 indent_size=5
 
 [project]
-name = "image_uploader"
+name = "wagtail_image_uploader"
 dynamic = ["version"]
 
 [project.scripts]
 "wiuc" = "image_uploader.cli:main"
 
-[build-system]
+[build-system-old]
 requires = ["setuptools == 68.2.2"]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/image_uploader"]
+
+[tool.hatch.version]
+path = "src/image_uploader/__init__.py"
