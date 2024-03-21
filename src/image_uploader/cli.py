@@ -1,14 +1,19 @@
 import os
 import sys
 from pathlib import Path
-
+from tqdm import tqdm
 import click
+import logging
+
+logger = logging.getLogger()
+logger.setLevel(logging.WARNING)
 
 from image_uploader import __VERSION__
 from image_uploader.client import UploadClient
 from image_uploader.config import SUPPORTED_IMAGE_FORMATS
 from image_uploader.factory import create_config_from_toml
-from image_uploader.utils import find_files, sizeof_fmt
+from redtoolbox.files import find_files, sizeof_fmt
+from redtoolbox.text import print_header
 
 
 @click.command()
@@ -19,11 +24,7 @@ def main(__input, sites, verbose=False):
     """
     CLI for the Wagtail Image Uploader.
     """
-    click.echo("*" * 80)
-    click.echo("")
-    click.echo(click.style(f"Wagtail Image Upload Client v.{__VERSION__}".center(80), fg="blue"))
-    click.echo("")
-    click.echo("*" * 80)
+    print_header(f"Wagtail Image Upload Client v.{__VERSION__}")
 
     local_config = os.path.join(os.getcwd(), ".image_uploader.toml")
     global_config = os.path.join(Path.home(), ".image_uploader.toml")
@@ -59,13 +60,18 @@ def main(__input, sites, verbose=False):
             return
 
         click.echo(click.style(f"Preparing to upload {len(files)} files ({sizeof_fmt(file_size)}) to {len(sites)} sites.", fg="green"))
-        for site in sites:
-            client = UploadClient.create_from_config(user_configs.get(site), verbose=verbose)
-            if client.defaults:
-                click.echo(click.style(f"Defaults: {client.defaults}", fg="green"))
-            if client.pre_processors:
-                pre_processor_names = [p.__class__.__name__ for p in client.pre_processors]
-                click.echo(click.style(f"Pre-processors: {pre_processor_names}", fg="green"))
+        with tqdm(range(0, len(sites) + len(files)), ncols=80) as progress:
+            def client_callback(status: str):
+                progress.update(1)
+                return status
 
-            click.echo(click.style(f"Uploading to {site} @ {client.url}.", fg="green"))
-            client.upload_files(*files)
+            for site in sites:
+                client = UploadClient.create_from_config(user_configs.get(site), verbose=verbose)
+                if client.defaults:
+                    click.echo(click.style(f"Defaults: {client.defaults}", fg="green"))
+                if client.pre_processors:
+                    pre_processor_names = [p.__class__.__name__ for p in client.pre_processors]
+                    click.echo(click.style(f"Pre-processors: {pre_processor_names}", fg="green"))
+
+                click.echo(click.style(f"Uploading to {site} @ {client.url}.", fg="green"))
+                client.upload_files(*files, callback=client_callback)

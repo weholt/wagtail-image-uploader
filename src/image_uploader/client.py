@@ -1,11 +1,13 @@
 import json
 import logging
 import os
-from typing import Any, Iterable, Protocol, Self
+from typing import Any, Iterable, Protocol, Self, Callable
 
 import requests
 
 from .config import SUPPORTED_IMAGE_FORMATS, PreProcessor, UploadClientConfiguration
+
+client_callback = Callable[[str], str]
 
 
 class UploadAbortedException(Exception):
@@ -83,7 +85,7 @@ class UploadClient:
         self.defaults = defaults
         return self
 
-    def upload_files(self, *filenames, **kwargs) -> None:
+    def upload_files(self, *filenames, callback: client_callback | None = None, **kwargs) -> None:
         """
         Will try to upload a set of images and its metadata to a given url.
         """
@@ -108,6 +110,8 @@ class UploadClient:
                     raise
             try:
                 success, response = self.upload_handler.upload_file(self.url, filename, metadata)
+                if callback:
+                    callback(f"(Success:{success}) Uploaded {filename}. Result: {response}")
                 if self.verbse:
                     logging.debug(f"(Success:{success}) Uploaded {filename}. Result: {response}")
             except ConnectionError as ex:
